@@ -7,6 +7,10 @@ class QLearning:
     def __init__(self, env, bins=(10, 10, 10, 10), gamma=0.99, alpha=0.1, epsilon=0.1, num_episodes=50000):
         self.env = env
         self.bins = bins
+        self.position_bins = np.linspace(-4.8, 4.8, self.bins[0])
+        self.velocity_bins = np.linspace(-3.0, 3.0, self.bins[1])
+        self.angle_bins = np.linspace(-0.418, 0.418, self.bins[2])
+        self.angular_velocity_bins = np.linspace(-2.0, 2.0, self.bins[3])
         self.gamma = gamma
         self.alpha = alpha
         self.epsilon = epsilon
@@ -16,12 +20,11 @@ class QLearning:
         self.Q = np.zeros((self.num_states, self.num_actions))
 
     def discretize_state(self, state):
-        position_bins, velocity_bins, angle_bins, angular_velocity_bins = self.bins
         discretized = [
-            np.clip(np.digitize(state[0], np.linspace(-4.8, 4.8, position_bins)) - 1, 0, position_bins - 1),
-            np.clip(np.digitize(state[1], np.linspace(-3.0, 3.0, velocity_bins)) - 1, 0, velocity_bins - 1),
-            np.clip(np.digitize(state[2], np.linspace(-0.418, 0.418, angle_bins)) - 1, 0, angle_bins - 1),
-            np.clip(np.digitize(state[3], np.linspace(-2.0, 2.0, angular_velocity_bins)) - 1, 0, angular_velocity_bins - 1)
+            np.clip(np.digitize(state[0], self.position_bins) - 1, 0, self.bins[0] - 1),
+            np.clip(np.digitize(state[1], self.velocity_bins) - 1, 0, self.bins[1] - 1),
+            np.clip(np.digitize(state[2], self.angle_bins) - 1, 0, self.bins[2] - 1),
+            np.clip(np.digitize(state[3], self.angular_velocity_bins) - 1, 0, self.bins[3] - 1)
         ]
         return tuple(discretized)
 
@@ -50,7 +53,8 @@ class QLearning:
             step_count = 0
             while not done:
                 action = self.choose_action(state_idx)
-                next_state, reward, done, _, _ = self.env.step(action)
+                next_state, reward, terminated, truncated, info = self.env.step(action)
+                done = terminated or truncated
                 step_count += 1
                 # 检查自定义终止条件
                 if step_count > 200 or abs(next_state[0]) > 2.4 or abs(next_state[2]) > np.radians(12):
@@ -65,7 +69,7 @@ class QLearning:
                 test_env = gym.make('CartPole-v1', render_mode='human')
                 original_env = self.env
                 self.env = test_env
-                avg_reward = self.test(num_episodes=10, no_render=False, verbose=True)
+                avg_reward = self.test(num_episodes=10, no_render=False, verbose=True)  # 有图形界面，有数值打印
                 rewards.append(avg_reward)
                 episodes.append(episode)
                 print(f"After {episode} episodes, average reward: {avg_reward}")
@@ -89,7 +93,8 @@ class QLearning:
             step_count = 0
             while not done:
                 action = policy[self.state_to_index(state)]
-                next_state, reward, done, _, _ = self.env.step(action)
+                next_state, reward, terminated, truncated, info = self.env.step(action)
+                done = terminated or truncated
                 step_count += 1
                 if verbose:
                     print(f"Position: {next_state[0]:.2f}, Velocity: {next_state[1]:.2f}, Angle: {next_state[2]:.2f}, Angular Velocity: {next_state[3]:.2f}", flush=True)

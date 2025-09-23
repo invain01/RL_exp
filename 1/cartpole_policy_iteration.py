@@ -46,7 +46,7 @@ class QLearning:
                 test_env = gym.make('CartPole-v1', render_mode='human')
                 original_env = self.env
                 self.env = test_env
-                avg_reward = self.test(num_episodes=10, no_render=False, verbose=True)
+                avg_reward = self.test(num_episodes=15, no_render=False, verbose=True)
                 rewards.append(avg_reward)
                 episodes.append(episode)
                 print(f"After {episode} episodes, average reward: {avg_reward}")

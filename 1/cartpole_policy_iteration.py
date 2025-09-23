@@ -4,13 +4,13 @@ import time
 import matplotlib.pyplot as plt
 
 class QLearning:
-    def __init__(self, env, bins=(12, 12, 12, 12), gamma=0.99, alpha=0.2, epsilon=0.05, num_episodes=8000):
+    def __init__(self, env, bins=(15, 15, 15, 15), gamma=0.99, alpha=0.2, epsilon=0.05, num_episodes=8000):
         self.env = env
         self.bins = bins
-        self.position_bins = np.linspace(-4.8, 4.8, self.bins[0])
-        self.velocity_bins = np.linspace(-3.0, 3.0, self.bins[1])
-        self.angle_bins = np.linspace(-0.418, 0.418, self.bins[2])
-        self.angular_velocity_bins = np.linspace(-2.0, 2.0, self.bins[3])
+        self.position_bins = np.linspace(-2.4, 2.4, self.bins[0])
+        self.velocity_bins = np.linspace(-5.0, 5.0, self.bins[1])
+        self.angle_bins = np.linspace(np.radians(-41.8), np.radians(41.8), self.bins[2])
+        self.angular_velocity_bins = np.linspace(-5.0, 5.0, self.bins[3])
         self.gamma = gamma
         self.alpha = alpha
         self.epsilon = epsilon

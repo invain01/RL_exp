@@ -69,7 +69,8 @@ class QLearning:
                 test_env = gym.make('CartPole-v1', render_mode='human')
                 original_env = self.env
                 self.env = test_env
-                avg_reward = self.test(num_episodes=10, no_render=False, verbose=True)  # 有图形界面，有数值打印
+                #avg_reward = self.test(num_episodes=20, no_render=False, verbose=True)  
+                avg_reward = self.test(num_episodes=20, no_render=True, verbose=True)  
                 rewards.append(avg_reward)
                 episodes.append(episode)
                 print(f"After {episode} episodes, average reward: {avg_reward}")
@@ -80,7 +81,7 @@ class QLearning:
         test_env = gym.make('CartPole-v1', render_mode='human')
         original_env = self.env
         self.env = test_env
-        avg_reward = self.test(num_episodes=10, no_render=False, verbose=True)
+        avg_reward = self.test(num_episodes=20, no_render=False, verbose=True)
         rewards.append(avg_reward)
         episodes.append(5000)
         print(f"After 5000 episodes, average reward: {avg_reward}")
@@ -111,7 +112,7 @@ class QLearning:
                     print(f"Position: {next_state[0]:.2f}, Velocity: {next_state[1]:.2f}, Angle: {next_state[2]:.2f}, Angular Velocity: {next_state[3]:.2f}", flush=True)
                 if not no_render:
                     self.env.render()
-                    time.sleep(0.01)
+                    time.sleep(0.001)
                 episode_reward += reward
                 # 检查自定义终止条件
                 if step_count > 200 or abs(next_state[0]) > 2.4 or abs(next_state[2]) > np.radians(12):

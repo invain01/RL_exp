@@ -4,7 +4,7 @@ import time
 import matplotlib.pyplot as plt
 
 class QLearning:
-    def __init__(self, env, bins=(15, 15, 15, 15), gamma=0.99, alpha=0.2, epsilon=0.05, num_episodes=8000):
+    def __init__(self, env, bins=(15, 15, 15, 15), gamma=0.99, alpha=0.17, epsilon=0.03, num_episodes=8000):
         self.env = env
         self.bins = bins
         self.position_bins = np.linspace(-2.4, 2.4, self.bins[0])
@@ -46,7 +46,7 @@ class QLearning:
                 test_env = gym.make('CartPole-v1', render_mode='human')
                 original_env = self.env
                 self.env = test_env
-                avg_reward = self.test(num_episodes=10, no_render=False, verbose=True)
+                avg_reward = self.test(num_episodes=15, no_render=False, verbose=True)
                 rewards.append(avg_reward)
                 episodes.append(episode)
                 print(f"After {episode} episodes, average reward: {avg_reward}")

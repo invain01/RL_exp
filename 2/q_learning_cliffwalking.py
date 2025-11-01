@@ -68,8 +68,8 @@ def q_learning(env, num_episodes=500, alpha=0.2, gamma=0.99,
     return Q, rewards_all_episodes
 
 
-def sarsa(env, num_episodes=500, alpha=0.5, gamma=0.99,
-          epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.01,
+def sarsa(env, num_episodes=500, alpha=0.18, gamma=0.99,
+          epsilon=1.0, epsilon_decay=0.9985, min_epsilon=0.0001,
           max_steps_per_episode=1000):
     """On-policy SARSA implementation. Returns Q and rewards list."""
     n_states = env.observation_space.n
@@ -361,11 +361,11 @@ def main():
 
     # training hyperparameters
     num_episodes = 2000
-    alpha = 0.7
+    alpha = 0.23
     gamma = 0.99
     epsilon = 1.0
-    epsilon_decay = 0.995
-    min_epsilon = 0.01
+    epsilon_decay = 0.99
+    min_epsilon = 0.0001
 
     # Run Q-learning
     print("Starting Q-learning...")
@@ -391,8 +391,8 @@ def main():
 
     # print policies
     try:
-        if hasattr(env, 'shape'):
-            n_rows, n_cols = env.shape
+        if hasattr(env.unwrapped, 'shape'):
+            n_rows, n_cols = env.unwrapped.shape
         else:
             n_rows, n_cols = 4, 12
     except Exception:

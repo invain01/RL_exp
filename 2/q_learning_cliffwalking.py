@@ -10,8 +10,8 @@ from matplotlib.animation import FuncAnimation
 import matplotlib.patches as patches
 
 
-def q_learning(env, num_episodes=500, alpha=0.5, gamma=0.99,
-               epsilon=1.0, epsilon_decay=0.995, min_epsilon=0.01,
+def q_learning(env, num_episodes=500, alpha=0.2, gamma=0.99,
+               epsilon=1.0, epsilon_decay=0.9985, min_epsilon=0.00001,
                max_steps_per_episode=1000):
     n_states = env.observation_space.n
     n_actions = env.action_space.n
@@ -323,7 +323,7 @@ def print_policy(policy, n_rows=4, n_cols=12):
         print(' '.join(row))
 
 
-def plot_rewards(rewards, save_path=None):
+def plot_rewards(rewards, save_path=None, title=None):
     plt.figure(figsize=(8, 4))
     plt.plot(rewards, label='episode reward')
     # moving average
@@ -333,6 +333,8 @@ def plot_rewards(rewards, save_path=None):
         plt.plot(range(window - 1, window - 1 + len(ma)), ma, label=f'{window}-ep MA')
     plt.xlabel('Episode')
     plt.ylabel('Total Reward')
+    if title:
+        plt.title(title)
     plt.legend()
     plt.grid(True)
     if save_path:
@@ -358,7 +360,7 @@ def main():
     os.makedirs(out_dir, exist_ok=True)
 
     # training hyperparameters
-    num_episodes = 1000
+    num_episodes = 2000
     alpha = 0.7
     gamma = 0.99
     epsilon = 1.0
@@ -401,9 +403,18 @@ def main():
     print("SARSA policy:")
     print_policy(policy_s, n_rows=n_rows, n_cols=n_cols)
 
+    # Test policies with GUI visualization
+    print("\n" + "="*50)
+    print("TESTING POLICIES WITH GUI VISUALIZATION")
+    print("="*50)
+    
+    test_results = test_policies_with_gui(env, Q_q, Q_s, n_rows, n_cols, out_dir)
+
     # plots: separate and combined
-    plot_rewards(rewards_q, save_path=os.path.join(out_dir, 'rewards_q_learning.png'))
-    plot_rewards(rewards_s, save_path=os.path.join(out_dir, 'rewards_sarsa.png'))
+    plot_rewards(rewards_q, save_path=os.path.join(out_dir, 'rewards_q_learning.png'), title='Q-learning Training Rewards')
+    plt.show()
+    plot_rewards(rewards_s, save_path=os.path.join(out_dir, 'rewards_sarsa.png'), title='SARSA Training Rewards')
+    plt.show()
 
     # combined plot
     plt.figure(figsize=(10, 5))
@@ -427,18 +438,12 @@ def main():
     plt.tight_layout()
     plt.savefig(combined_file)
     print(f"Saved combined reward plot to {combined_file}")
+    plt.show()
 
     # save Q-tables
     np.save(os.path.join(out_dir, 'q_table_q_learning.npy'), Q_q)
     np.save(os.path.join(out_dir, 'q_table_sarsa.npy'), Q_s)
     print(f"Saved Q-tables to {out_dir}")
-
-    # Test policies with GUI visualization
-    print("\n" + "="*50)
-    print("TESTING POLICIES WITH GUI VISUALIZATION")
-    print("="*50)
-    
-    test_results = test_policies_with_gui(env, Q_q, Q_s, n_rows, n_cols, out_dir)
     
     print("\nAll training and testing completed!")
     print(f"Check {out_dir} for all generated files:")
